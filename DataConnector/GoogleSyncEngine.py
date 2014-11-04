@@ -300,7 +300,7 @@ class GoogleSyncEngine(threading.Thread):
                     googleRow['mac']==mirrorRow['mac'] and
                     googleRow['type']==mirrorRow['type']
                 ):
-                    insertNewRow = False
+                    insertNewRow = True
                     if googleRow!=mirrorRow:
                         rowToUpdate = e
                     break
