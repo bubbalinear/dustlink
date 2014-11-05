@@ -168,7 +168,7 @@ class MirrorEngine(EventBusClient.EventBusClient):
                     'subscribeToLed':  True,
                 }
             ]
-            print newData
+            # print newData
 
         elif signal in ['parsedAppData_DC2126A']:
             
@@ -285,7 +285,8 @@ class MirrorEngine(EventBusClient.EventBusClient):
                         break
                 if not found:
                     self.mirrordata.append(nd)
-        
+                print mirrordata
+                
         # dispatch (once even if multiple data points)
         with self.dataLock:
             for nd in newData:
