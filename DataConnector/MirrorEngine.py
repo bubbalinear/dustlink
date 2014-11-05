@@ -285,7 +285,7 @@ class MirrorEngine(EventBusClient.EventBusClient):
                         break
                 if not found:
                     self.mirrordata.append(nd)
-                print mirrordata
+            print mirrordata
                 
         # dispatch (once even if multiple data points)
         with self.dataLock:
