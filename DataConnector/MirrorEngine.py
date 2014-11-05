@@ -168,8 +168,7 @@ class MirrorEngine(EventBusClient.EventBusClient):
                     'subscribeToLed':  True,
                 }
             ]
-    
-print newData
+            print newData
 
         elif signal in ['parsedAppData_DC2126A']:
             
