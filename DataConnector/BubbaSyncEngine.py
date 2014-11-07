@@ -8,8 +8,45 @@ log = logging.getLogger('BubbaSyncEngine')
 log.setLevel(logging.ERROR)
 log.addHandler(NullHandler())
 
-from EventBus import EventBusClient
 import Queue
+import threading
+import time
+
+from EventBus import EventBusClient
+
+class BubbaPublisher(threading.Thread):
+    
+    def __init__(self,q):
+        
+        # store params
+        self.q = q
+        
+        # initialize the thread
+        threading.Thread.__init__(self)
+        self.name = 'BubbaPublisher'
+        
+        # start myself
+        self.start()
+    
+    def run(self):
+        
+        while True:
+        
+            elems  = []
+            
+            elems += [self.q.get(block=True)]
+            
+            while True:
+                elem   = self.q.get(block=False)
+                if not elem:
+                    break
+                elems += [elem]
+            
+            print elems
+            
+            time.sleep(5)
+            
+            print 'published!'
 
 class BubbaSyncEngine(EventBusClient.EventBusClient):
     
@@ -18,8 +55,8 @@ class BubbaSyncEngine(EventBusClient.EventBusClient):
         # store params
         
         # local variables
-        
-        self.q = Queue.Queue(maxsize=2)
+        self.q          = Queue.Queue(maxsize=2)
+        self.publisher  = BubbaPublisher(self.q)
         
         # log
         log.info('creating instance')
