@@ -22,6 +22,7 @@ import AppInjector
 import MirrorEngine
 import GoogleSyncEngine
 import XivelySyncEngine
+import BubbaSyncEngine
 from   DustLinkData  import DustLinkData
 from   DustLinkData  import DataVaultException
 
@@ -54,6 +55,8 @@ class DataConnector(threading.Thread):
         self.mirrorEngine         = MirrorEngine.MirrorEngine()
         self.googleSyncEngine     = GoogleSyncEngine.GoogleSyncEngine()
         self.xivelySyncEngine     = XivelySyncEngine.XivelySyncEngine()
+        self.bubbaSyncEngine     = BubbaSyncEngine.BubbaSyncEngine()
+
         
         # connect to dispatcher
         dispatcher.connect(
