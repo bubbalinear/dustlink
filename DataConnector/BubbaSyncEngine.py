@@ -9,12 +9,17 @@ log.setLevel(logging.ERROR)
 log.addHandler(NullHandler())
 
 from EventBus import EventBusClient
+import Queue
 
 class BubbaSyncEngine(EventBusClient.EventBusClient):
     
     def __init__(self):
         
         # store params
+        
+        # local variables
+        
+        self.q = Queue.Queue(maxsize=2)
         
         # log
         log.info('creating instance')
@@ -29,8 +34,14 @@ class BubbaSyncEngine(EventBusClient.EventBusClient):
     def _handleTemperatureData(self,sender,signal,data):
         
         assert signal=='parsedAppData_OAPTemperature'
-        
-        print data
+        try:
+            self.q.put(data, block = False)
+            print data
+        except Queue.Full:
+            print 'Full!'
+        else:
+            print 'Growing!'
+           
     
 '''
         ########################################################################
