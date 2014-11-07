@@ -8,19 +8,9 @@ log = logging.getLogger('BubbaSyncEngine')
 log.setLevel(logging.ERROR)
 log.addHandler(NullHandler())
 
-import re
-import time
-import copy
-import threading
-import traceback
+from EventBus import EventBusClient
 
-from   pydispatch import dispatcher
-import gdata.spreadsheet.service
-
-from DustLinkData import DustLinkData
-from Queue import Queue
-
-class BubbaSyncEngine(threading.Thread):
+class BubbaSyncEngine(EventBusClient.EventBusClient):
     
     def __init__(self):
         
@@ -28,6 +18,24 @@ class BubbaSyncEngine(threading.Thread):
         
         # log
         log.info('creating instance')
+        
+        # initialize parent class
+        EventBusClient.EventBusClient.__init__(self,
+            signal      = 'parsedAppData_OAPTemperature',
+            cb          = self._handleTemperatureData,
+        )
+        self.name       = 'BubbaSyncEngine'
+    
+    def _handleTemperatureData(self,sender,signal,data):
+        
+        assert signal=='parsedAppData_OAPTemperature'
+        
+        print data
+    
+'''
+        ########################################################################
+        ########################################################################
+        ########################################################################
         
         # initialize parent class
         threading.Thread.__init__(self)
@@ -152,7 +160,7 @@ class BubbaSyncEngine(threading.Thread):
                     self.bubbaDict['lastvalue'] = mirrorData[0][1][0]['lastvalue']
                     self.bubbaDict['lastupdated'] = mirrorData[0][1][0]['lastupdated']
                     self.bubbaQueue.put(mirrorData[0][1])
-                    print self.bubbaQueue.qsize
+                    print self.bubbaQueue.qsize()
                     #instead of doing all this I need to take these four values
 					#type, mac, lastvalue, and lastupdated and add them as a row in a queue
 					#or maybe a dictionary in a queue, or an array in a queue
@@ -161,7 +169,9 @@ class BubbaSyncEngine(threading.Thread):
 					#then I need a handler that will take things out of the queue and put them in a spreadsheet
                 
             time.sleep(1)
-                
+            
+            print mirrorData
+            
             assert len(mirrorData)==1
             mirrorData = mirrorData[0][1]
 
@@ -231,3 +241,5 @@ class BubbaSyncEngine(threading.Thread):
             else:
                 raise SystemError('misformed spreadsheet data')
         return thisLine
+
+'''
