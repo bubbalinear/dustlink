@@ -37,10 +37,12 @@ class BubbaPublisher(threading.Thread):
             elems += [self.q.get(block=True)]
             
             while True:
-                elem   = self.q.get(block=False)
-                if not elem:
+                try:
+                    elem   = self.q.get(block=False)
+                except Queue.Empty:
                     break
-                elems += [elem]
+                else:
+                    elems += [elem]
             
             print elems
             
