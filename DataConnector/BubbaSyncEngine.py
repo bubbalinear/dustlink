@@ -13,6 +13,7 @@ import threading
 import time
 import re
 import os
+from SmartMeshSDK import FormatUtils
 
 from EventBus import EventBusClient
 from GoogleSyncEngine import GoogleSyncEngine
@@ -76,9 +77,9 @@ class BubbaPublisher(threading.Thread):
                 print elem
                 
                 row = {
-                    'timestamp':   1234, # poipoipoi
-                    'mac':         '00-11-22-33-44-55-66-77',# poipoipoi
-                    'temperature': 12.4,# poipoipoi
+                    'timestamp':   FormatUtils.formatTimestamp(elem['timestamp']),
+                    'mac':         FormatUtils.formatMacString(elem['mac']),
+                    'temperature': str(elem['fields']['temperature']/100.0),
                 }
                 
                 self.googleClient.InsertRow(
