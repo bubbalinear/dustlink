@@ -11,8 +11,11 @@ log.addHandler(NullHandler())
 import Queue
 import threading
 import time
+import re
+import os
 
 from EventBus import EventBusClient
+from GoogleSyncEngine import GoogleSyncEngine
 
 class BubbaPublisher(threading.Thread):
     
@@ -20,6 +23,30 @@ class BubbaPublisher(threading.Thread):
         
         # store params
         self.q = q
+        
+        # read Google credentials from file
+        googlecredentials = {}
+        with open(os.path.join('..','..','..','bin','dustLinkFullWeb','googlecredentials.secret')) as f:
+            for line in f:
+                m = re.search('(\S+)\s*=\s*(\S+)',line)
+                if m:
+                   key       = m.group(1)
+                   value     = m.group(2)
+                   googlecredentials[key] = value
+        
+        print googlecredentials
+        
+        # connect to Google
+        self.googleClient    = GoogleSyncEngine._connectToGoogle(
+            googleUsername   = googlecredentials['googleUsername'],
+            googlePassword   = googlecredentials['googlePassword'],
+        )
+        self.worksheetId     = GoogleSyncEngine._getWorksheetId(
+            googleClient     = self.googleClient,
+            spreadsheetKey   = googlecredentials['spreadsheetKey'],
+            worksheetName    = 'Sheet1',
+        )
+        print 'connected to Google!'
         
         # initialize the thread
         threading.Thread.__init__(self)
@@ -44,9 +71,21 @@ class BubbaPublisher(threading.Thread):
                 else:
                     elems += [elem]
             
-            print elems
-            
-            time.sleep(5)
+            for elem in elems:
+                
+                print elem
+                
+                row = {
+                    'timestamp':   1234, # poipoipoi
+                    'mac':         '00-11-22-33-44-55-66-77',# poipoipoi
+                    'temperature': 12.4,# poipoipoi
+                }
+                
+                self.googleClient.InsertRow(
+                    row,
+                    self.spreadsheetKey,
+                    self.worksheetId,
+                )
             
             print 'published!'
 
