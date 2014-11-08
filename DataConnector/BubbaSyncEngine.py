@@ -25,25 +25,25 @@ class BubbaPublisher(threading.Thread):
         self.q = q
         
         # read Google credentials from file
-        googlecredentials = {}
+        self.googlecredentials = {}
         with open(os.path.join('..','..','..','bin','dustLinkFullWeb','googlecredentials.secret')) as f:
             for line in f:
                 m = re.search('(\S+)\s*=\s*(\S+)',line)
                 if m:
                    key       = m.group(1)
                    value     = m.group(2)
-                   googlecredentials[key] = value
+                   self.googlecredentials[key] = value
         
-        print googlecredentials
+        print self.googlecredentials
         
         # connect to Google
         self.googleClient    = GoogleSyncEngine._connectToGoogle(
-            googleUsername   = googlecredentials['googleUsername'],
-            googlePassword   = googlecredentials['googlePassword'],
+            googleUsername   = self.googlecredentials['googleUsername'],
+            googlePassword   = self.googlecredentials['googlePassword'],
         )
         self.worksheetId     = GoogleSyncEngine._getWorksheetId(
             googleClient     = self.googleClient,
-            spreadsheetKey   = googlecredentials['spreadsheetKey'],
+            spreadsheetKey   = self.googlecredentials['spreadsheetKey'],
             worksheetName    = 'Sheet1',
         )
         print 'connected to Google!'
@@ -83,7 +83,7 @@ class BubbaPublisher(threading.Thread):
                 
                 self.googleClient.InsertRow(
                     row,
-                    self.spreadsheetKey,
+                    self.googlecredentials['spreadsheetKey'],
                     self.worksheetId,
                 )
             
